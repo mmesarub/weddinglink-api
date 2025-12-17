@@ -7,7 +7,7 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
 
 /* =========================================================
    MIDDLEWARES
@@ -324,5 +324,5 @@ app.post("/public/rsvp/:userId", async (req, res) => {
    SERVIDOR
 ========================================================= */
 app.listen(PORT, () => {
-  console.log(`🚀 Backend activo en http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
