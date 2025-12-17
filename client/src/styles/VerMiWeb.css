@@ -1,0 +1,133 @@
+@import "./paletas.css";
+
+.verweb-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 26px;
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.06);
+}
+
+.title {
+  font-size: 28px;
+  margin-bottom: 6px;
+  color: var(--primary-dark);
+}
+
+.subtitle {
+  color: var(--text-soft);
+  margin-bottom: 25px;
+}
+
+/* ============================================================
+   TARJETA DEL ENLACE PÚBLICO
+============================================================ */
+
+.verweb-url-card {
+  background: var(--secondary-light);
+  border: 1px solid var(--secondary);
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+/* EFECTO LÁSER */
+.laser-box::before,
+.laser-box::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 999px;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.laser-box::before { top: 0; }
+.laser-box::after  { bottom: 0; }
+
+.laser-box:hover::before,
+.laser-box:hover::after {
+  width: 85%;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--primary-dark);
+}
+
+.url-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.url-box input {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--secondary);
+  background: white;
+}
+
+/* Botón copiar */
+.btn-copy {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.btn-copy:hover {
+  background: var(--primary);
+}
+
+/* Botón abrir */
+.btn-open {
+  width: 100%;
+  margin-top: 5px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--primary);
+  border: 2px solid var(--gold);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn-open:hover {
+  background: var(--primary-dark);
+  border-color: var(--gold-dark);
+}
+
+/* ============================================================
+   PREVIEW IFRAME
+============================================================ */
+
+.preview-section h3 {
+  margin-bottom: 12px;
+}
+
+.verweb-iframe {
+  width: 100%;
+  height: 75vh;
+  border-radius: 16px;
+  border: 2px solid var(--gold);
+  background: white;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.1);
+}
+
+.preview-helper-text {
+  font-size: 13px;
+  margin-top: 10px;
+  color: var(--text-soft);
+}

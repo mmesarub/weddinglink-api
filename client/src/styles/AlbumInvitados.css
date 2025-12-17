@@ -1,0 +1,135 @@
+/* ===============================
+   DASHBOARD — ÁLBUM INVITADOS
+================================ */
+
+.album-dashboard {
+  padding: 30px;
+  background: var(--bg-soft);
+  min-height: calc(100vh - 80px);
+}
+
+.album-dashboard h2 {
+  margin-bottom: 24px;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.empty-album {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+/* ===============================
+   GRID DEL ÁLBUM
+================================ */
+
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 22px;
+}
+
+/* ===============================
+   TARJETA DE FOTO
+================================ */
+
+.album-card {
+  position: relative;
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Imagen */
+.album-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+/* Hover tarjeta */
+.album-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 16px rgba(213, 184, 138, 0.45);
+}
+
+/* ===============================
+   EFECTO LÁSER (ARRIBA Y ABAJO)
+================================ */
+
+.album-card.laser::before,
+.album-card.laser::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 999px;
+  transform: translateX(-50%);
+  transition: width 0.35s ease;
+  z-index: 5;
+}
+
+.album-card.laser::before {
+  top: 6px;
+}
+
+.album-card.laser::after {
+  bottom: 6px;
+}
+
+.album-card.laser:hover::before,
+.album-card.laser:hover::after {
+  width: 75%;
+}
+
+/* ===============================
+   BOTÓN ELIMINAR
+================================ */
+
+.album-card .delete-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.75rem;
+  cursor: pointer;
+  background: linear-gradient(
+    135deg,
+    var(--danger),
+    var(--danger-dark)
+  );
+  color: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 6;
+}
+
+.album-card .delete-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(220, 80, 80, 0.35);
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 600px) {
+  .album-dashboard {
+    padding: 18px;
+  }
+
+  .album-dashboard h2 {
+    font-size: 22px;
+  }
+
+  .album-card img {
+    height: 140px;
+  }
+}

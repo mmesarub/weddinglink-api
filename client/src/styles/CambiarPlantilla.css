@@ -1,0 +1,229 @@
+/* =========================================================
+   SECCIÓN: CAMBIAR PLANTILLA
+========================================================= */
+
+.plantilla-container-preview {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 24px 26px 32px;
+  background: #fff9fb;
+  border-radius: 24px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f4dce0;
+}
+
+.title {
+  font-size: 26px;
+  margin-bottom: 6px;
+  color: #3f2b35;
+}
+
+.subtitle {
+  margin-bottom: 24px;
+  color: #7a5a6a;
+  font-size: 15px;
+}
+
+/* LAYOUT */
+.selector-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+/* =========================================================
+   MINIATURAS
+========================================================= */
+
+.plantilla-list {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.plantilla-thumb-card {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+/* Tarjeta */
+.plantilla-thumb-inner {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px;
+  border: 1px solid #f4dce0;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  transition: 0.25s ease;
+}
+
+.plantilla-thumb-inner img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.plantilla-thumb-name {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #4f3a46;
+}
+
+.plantilla-badge-actual {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #ffedf3;
+  color: #b85f80;
+  border: 1px solid rgba(184,95,128,0.3);
+}
+
+/* Hover movimiento */
+.plantilla-thumb-card:hover .plantilla-thumb-inner {
+  transform: translateX(3px) translateY(-1px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.1);
+}
+
+/* =========================================================
+   EFECTO LÁSER — IGUAL QUE CONFIGURACION BODA
+========================================================= */
+
+.laser-box {
+  position: relative;
+}
+
+.laser-box::before,
+.laser-box::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 999px;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+/* línea superior */
+.laser-box::before {
+  top: 0;
+}
+
+/* línea inferior */
+.laser-box::after {
+  bottom: 0;
+}
+
+/* Hover → muestra láser */
+.plantilla-thumb-card:hover .laser-box::before,
+.plantilla-thumb-card:hover .laser-box::after {
+  width: 80%;
+}
+
+/* Activo → láser permanente */
+.plantilla-thumb-card.active .laser-box::before,
+.plantilla-thumb-card.active .laser-box::after {
+  width: 80%;
+}
+
+/* =========================================================
+   IFRAME
+========================================================= */
+
+.vista-previa {
+  flex: 1;
+}
+
+.iframeWrapper { position: relative; }
+
+.iframe-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,#ffe6f0,#fff2f7,#ffe6f0);
+  animation: skeleton 1.4s infinite;
+  border-radius: 18px;
+}
+
+@keyframes skeleton {
+  0% { background-position: 200% 0; }
+  100%{ background-position: -200% 0; }
+}
+
+.iframe-preview {
+  width: 100%;
+  height: 80vh;
+  border-radius: 18px;
+  border: 2px solid #ffd3e0;
+  box-shadow: 0 8px 26px rgba(0,0,0,0.12);
+  background: white;
+}
+
+.preview-helper-text {
+  font-size: 13px;
+  color: #876879;
+  margin-top: 10px;
+}
+
+/* =========================================================
+   BOTÓN + MENSAJES
+========================================================= */
+
+.btn-guardar {
+  margin-top: 22px;
+  padding: 11px 26px;
+  background: linear-gradient(135deg,#ff8fb2,#ffb3c8);
+  color: white;
+  font-size: 16px;
+  border-radius: 999px;
+  border: none;
+}
+
+.btn-guardar:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.status-msg {
+  margin-top: 18px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.status-msg.success {
+  background: #e8fff4;
+  color: #1f7a4d;
+}
+
+.status-msg.error {
+  background: #ffecec;
+  color: #b53838;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .selector-layout { flex-direction: column; }
+  .plantilla-list {
+    flex-direction: row;
+    overflow-x: auto;
+    width: 100%;
+  }
+  .plantilla-thumb-card { min-width: 180px; }
+  .iframe-preview { height: 72vh; }
+}
+
+@media (max-width: 600px) {
+  .plantilla-container-preview {
+    margin: 20px 12px;
+    padding: 18px 16px;
+  }
+  .iframe-preview { height: 65vh; }
+}

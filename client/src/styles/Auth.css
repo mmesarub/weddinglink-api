@@ -1,0 +1,208 @@
+/* =========================================================
+   CONTENEDOR GENERAL
+========================================================= */
+
+.auth-container {
+  min-height: 100vh;
+  background: var(--bg-soft);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 16px;
+}
+
+/* =========================================================
+   TARJETA PRINCIPAL
+========================================================= */
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 35px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.1);
+  position: relative;
+  border: 1px solid var(--secondary-light);
+  text-align: left;
+}
+
+/* TÍTULO */
+.auth-card h2 {
+  text-align: center;
+  font-size: 1.7rem;
+  margin-bottom: 25px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* =========================================================
+   EFECTO LÁSER — BORDE ANIMADO SUPERIOR/INFERIOR
+========================================================= */
+
+.auth-card::before,
+.auth-card::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+  transform: translateX(-50%);
+  transition: width 0.35s ease;
+  border-radius: 999px;
+}
+
+.auth-card::before {
+  top: 0;
+}
+
+.auth-card::after {
+  bottom: 0;
+}
+
+.auth-card:hover::before,
+.auth-card:hover::after {
+  width: 80%;
+}
+
+/* =========================================================
+   FORMULARIO
+========================================================= */
+
+.auth-card form {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+/* LABELS (CORREGIDO EL PROBLEMA DE ANCHO) */
+
+.auth-card label {
+  display: inline-block; /* NO ocupa todo el ancho */
+  width: auto;
+  max-width: 100%;
+  margin: 12px 0 6px;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* INPUTS */
+
+.auth-card input[type="text"],
+.auth-card input[type="email"],
+.auth-card input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--secondary);
+  background: var(--secondary-light);
+  transition: 0.3s ease;
+  font-size: 1rem;
+}
+
+/* EFECTO LÁSER EN INPUT */
+
+.auth-card input:focus {
+  background: #fff;
+  border-color: var(--gold);
+  box-shadow: 
+    0 0 0 2px rgba(213, 184, 138, 0.4),
+    0 0 10px rgba(213, 184, 138, 0.6);
+  outline: none;
+}
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 18px;
+}
+
+.checkbox-container a {
+  color: var(--primary-dark);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.checkbox-container a:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   BOTÓN SUBMIT
+========================================================= */
+
+.btn-primary.full {
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--primary);
+  border: 2px solid var(--gold);
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn-primary.full:hover {
+  background: var(--primary-dark);
+  border-color: var(--gold-dark);
+  transform: translateY(-3px);
+}
+
+/* =========================================================
+   MENSAJES Y LINKS
+========================================================= */
+
+.auth-message {
+  margin-top: 12px;
+  color: var(--primary-dark);
+  text-align: center;
+  font-weight: 600;
+}
+
+.auth-switch {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.auth-switch a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 600px) {
+  .auth-card {
+    padding: 26px;
+  }
+
+  .auth-card h2 {
+    font-size: 1.45rem;
+  }
+
+  .btn-primary.full {
+    font-size: 1rem;
+  }
+
+  .auth-card:hover::before,
+  .auth-card:hover::after {
+    width: 65%;
+  }
+}

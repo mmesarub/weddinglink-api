@@ -1,0 +1,58 @@
+.guest-dashboard {
+  padding: 30px;
+}
+
+.add-guest {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.add-guest input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.add-guest button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+}
+
+.guest-list {
+  display: grid;
+  gap: 16px;
+}
+
+.guest-card {
+  background: white;
+  padding: 16px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.guest-card .code {
+  font-family: monospace;
+  font-weight: 600;
+}
+
+.guest-card button {
+  background: var(--danger);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.empty {
+  opacity: 0.6;
+}

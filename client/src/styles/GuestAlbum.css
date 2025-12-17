@@ -1,0 +1,22 @@
+.pw-guest-album {
+  margin: 60px auto;
+  max-width: 500px;
+  text-align: center;
+}
+
+.guest-upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guest-upload-form input,
+.guest-upload-form button {
+  padding: 10px;
+  font-size: 15px;
+}
+
+.upload-msg {
+  margin-top: 10px;
+}
+

@@ -1,0 +1,294 @@
+
+
+/* =========================================================
+   HOME — Estilos generales
+========================================================= */
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: var(--bg-soft);
+  color: var(--text-dark);
+}
+
+.landing {
+  text-align: center;
+}
+
+/* =========================================================
+   HERO — Portada principal
+========================================================= */
+
+.hero {
+  position: relative;
+  padding: 120px 20px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+}
+
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(170, 120, 140, 0.45);
+  backdrop-filter: blur(1px);
+}
+
+.hero h1,
+.hero p {
+  position: relative;
+  z-index: 2;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  opacity: 0.9;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-primary {
+  position: relative;
+  z-index: 2;
+  padding: 14px 32px;
+  background: var(--primary);
+  border: 2px solid var(--gold);
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 25px;
+  transition: 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--gold-dark);
+  transform: translateY(-4px);
+}
+
+/* =========================================================
+   SECCIÓN — ¿CÓMO FUNCIONA?
+========================================================= */
+
+.steps {
+  padding: 70px 20px;
+  background: var(--surface);
+}
+
+.steps h2 {
+  font-size: 2rem;
+  margin-bottom: 40px;
+}
+
+.step-list {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+/* TARJETA */
+.step {
+  background: var(--surface);
+  padding: 25px 20px;
+  border-radius: 14px;
+  width: 260px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: 0.3s ease;
+  position: relative;
+}
+
+.step:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+}
+
+/* CUADRADO LÁSER PREMIUM */
+
+/* Superior */
+.step::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+  transform: translateX(-50%);
+  transition: width 0.35s ease;
+  border-radius: 50px;
+}
+
+/* Inferior */
+.step::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+  transform: translateX(-50%);
+  transition: width 0.35s ease;
+  border-radius: 50px;
+}
+
+/* Laterales */
+.step .side-left,
+.step .side-right {
+  position: absolute;
+  width: 3px;
+  height: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(var(--gold), var(--gold-dark));
+  transition: height 0.35s ease;
+  border-radius: 50px;
+  pointer-events: none;
+}
+
+.step .side-left { left: 0; }
+.step .side-right { right: 0; }
+
+/* Activación del láser */
+.step:hover::before,
+.step:hover::after {
+  width: 80%;
+}
+
+.step:hover .side-left,
+.step:hover .side-right {
+  height: 80%;
+}
+
+/* =========================================================
+   SECCIÓN — PLANTILLAS (Slider secuencial centrado)
+========================================================= */
+
+.templates {
+  padding: 60px 20px;
+  background: #fbf8f2;
+}
+
+.templates h2 {
+  margin-bottom: 40px;
+  font-size: 2rem;
+  color: var(--text-dark);
+}
+
+/* CONTENEDOR CENTRADO */
+.template-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;               /* espacio entre tarjetas */
+  flex-wrap: nowrap;       /* NO bajar de línea */
+  width: 100%;
+  overflow: visible;       /* evita que se corten */
+  margin-top: 40px;
+}
+
+
+.template-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.template-list::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 20px;
+}
+
+/* TARJETAS */
+.template-card {
+  flex: 0 0 28%;
+   max-width: 280px;
+  min-width: 220px;
+  background: var(--surface);
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--gold);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+
+  opacity: .6;
+  transform: scale(1);
+  transition: transform .5s, opacity .5s, box-shadow .5s;
+}
+
+.template-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+/* TARJETA ACTIVA (zoom + glow dorado) */
+.template-card.active {
+  transform: scale(1.15);
+  opacity: 1;
+  box-shadow: 0 18px 40px rgba(212, 171, 83, 0.4);
+  border-color: var(--gold-dark);
+}
+
+/* =========================================================
+   CTA FINAL
+========================================================= */
+
+.cta {
+  padding: 70px 20px;
+  background: var(--surface);
+  color: var(--text-dark);
+  border-top: 1px solid var(--gold);
+}
+
+.cta h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+  padding: 22px;
+  background: #1d1d1d;
+  color: white;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .template-list {
+    gap: 20px;
+    max-width: 95%;
+  }
+
+  .template-card {
+    flex: 0 0 220px;
+  }
+}
+
+@media (max-width: 600px) {
+  .template-list {
+    gap: 16px;
+  }
+
+  .template-card {
+    flex: 0 0 75%;
+    margin: 0 auto;
+  }
+}

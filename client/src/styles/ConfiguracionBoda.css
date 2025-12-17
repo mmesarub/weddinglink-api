@@ -1,0 +1,393 @@
+/* ============================================================
+   CONTENEDOR GENERAL
+============================================================ */
+.config-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg-soft);
+  font-family: "Poppins", sans-serif;
+  color: var(--text-dark);
+  padding: 30px;
+  box-sizing: border-box;
+  gap: 40px;
+}
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+.config-sidebar {
+  width: 260px;
+  background: var(--surface);
+  padding: 24px;
+  box-sizing: border-box;
+   margin-left: 10%;
+  margin-top: 40px;
+
+  border-radius: 18px;
+  border: 1px solid var(--secondary);
+  box-shadow: 0px 6px 18px rgba(0,0,0,0.06);
+}
+
+.sidebar-header {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 20px;
+}
+
+/* FOTO PERFIL */
+.sidebar-photo {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.photo-wrapper {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 10px auto;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--secondary-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-placeholder {
+  color: var(--text-soft);
+}
+
+/* Botón subir foto */
+.btn-foto {
+  display: inline-block;
+  padding: 6px 12px;
+  background: var(--secondary);
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text-dark);
+}
+
+.btn-foto:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ============================================================
+   MENÚ LATERAL
+============================================================ */
+.menu-tabs {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* --------------------------------------------------------------
+   MENU ITEM + EFECTO LÁSER
+   -------------------------------------------------------------- */
+.menu-item {
+  position: relative;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--rose-dark);
+  transition: 0.25s ease;
+  overflow: hidden;
+}
+
+/* Líneas láser arriba y abajo */
+.menu-item::before,
+.menu-item::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 999px;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+/* Superior */
+.menu-item::before {
+  top: 0;
+}
+
+/* Inferior */
+.menu-item::after {
+  bottom: 0;
+}
+
+/* Hover: activa el láser */
+.menu-item:hover::before,
+.menu-item:hover::after {
+  width: 80%;
+}
+
+/* Texto hover */
+.menu-item:hover {
+  color: var(--rose-accent);
+  font-weight: 500;
+}
+
+/* Estado activo (tab seleccionado) */
+.menu-item.active {
+  background: var(--rose-light);
+  font-weight: 600;
+  color: var(--rose-dark);
+}
+
+.menu-item.active::before,
+.menu-item.active::after {
+  width: 80%;
+}
+
+
+/* ============================================================
+   MAIN CONTENT
+============================================================ */
+.config-main {
+  flex: 1;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   TARJETA PRINCIPAL
+============================================================ */
+.config-card {
+  background: var(--surface);
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0px 6px 18px rgba(0,0,0,0.06);
+  border: 1px solid var(--secondary);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.config-card h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+/* SUBTARJETAS */
+.sub-card {
+  background: var(--secondary-light);
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid var(--secondary);
+  margin-bottom: 18px;
+}
+
+/* ============================================================
+   INPUTS
+============================================================ */
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+input,
+textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--secondary);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  color: var(--text-dark);
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(228, 116, 150, 0.25);
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* Dos columnas */
+.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+/* ============================================================
+   BOTONES
+============================================================ */
+.btn-add,
+.btn-delete,
+.btn-secundario,
+.btn-guardar {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.25s ease;
+}
+
+/* Botón secundario */
+.btn-secundario {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-secundario:hover {
+  background: var(--primary);
+}
+
+/* Botón añadir */
+.btn-add {
+  background: var(--gold);
+  color: #fff;
+}
+
+.btn-add:hover {
+  background: var(--gold-dark);
+}
+
+/* Botón eliminar */
+.btn-delete {
+  background: #ffb3c6;
+  color: #fff;
+}
+
+.btn-delete:hover {
+  background: #ff94b0;
+}
+
+/* Botón guardar */
+.btn-guardar {
+  background: var(--primary);
+  color: #fff;
+  margin-top: 15px;
+  border: 2px solid var(--gold);
+}
+
+.btn-guardar:hover {
+  background: var(--primary-dark);
+  border-color: var(--gold-dark);
+}
+
+.btn-guardar:disabled {
+  background: var(--secondary);
+  cursor: not-allowed;
+}
+
+/* Mensajes */
+.save-msg {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+/* ============================================================
+   GALERÍA
+============================================================ */
+.gallery-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.gallery-item {
+  position: relative;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid var(--secondary);
+}
+
+.gallery-item .btn-delete {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+/* ============================================================
+   FOTO PORTADA
+============================================================ */
+
+.cover-photo {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 2px solid var(--secondary);
+}
+
+.cover-placeholder {
+  width: 100%;
+  height: 200px;
+  background: var(--secondary);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+}
+/* ============================================================
+   EFECTO LÁSER PREMIUM
+============================================================ */
+.laser-box {
+  position: relative;
+}
+
+.laser-box::before,
+.laser-box::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+  border-radius: 999px;
+  transform: translateX(-50%);
+  transition: width 0.35s ease;
+}
+
+.laser-box::before {
+  top: 0;
+}
+
+.laser-box::after {
+  bottom: 0;
+}
+
+.laser-box:hover::before,
+.laser-box:hover::after {
+  width: 85%;
+}

@@ -1,0 +1,256 @@
+/* ==========================================
+   PLANTILLA 2 — EDITORIAL MINIMAL (COMPLETA)
+========================================== */
+
+.public-wedding.plantilla2 {
+  --pw-bg: #fbfbfb;
+  --pw-surface: #ffffff;
+  --pw-text: #111111;
+  --pw-muted: rgba(17, 17, 17, 0.70);
+  --pw-line: rgba(17, 17, 17, 0.10);
+  --pw-accent: #111111;
+  --pw-radius: 14px;
+
+  background: var(--pw-bg);
+  color: var(--pw-text);
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.public-wedding.plantilla2 a { color: var(--pw-text); }
+.public-wedding.plantilla2 a:hover { opacity: 0.85; }
+
+.public-wedding.plantilla2 .pw-cover {
+  height: 82vh;
+  min-height: 520px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: grid;
+  place-items: end center;
+  padding: 28px 16px;
+}
+
+.public-wedding.plantilla2 .pw-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(0,0,0,0.62), rgba(0,0,0,0.06));
+}
+
+.public-wedding.plantilla2 .pw-overlay {
+  position: relative;
+  z-index: 2;
+  width: min(980px, 92%);
+  padding: 18px 0 0;
+  text-align: left;
+  color: #fff;
+}
+
+.public-wedding.plantilla2 .pw-names {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.public-wedding.plantilla2 .pw-date {
+  margin: 10px 0 0;
+  color: rgba(255,255,255,0.82);
+  font-weight: 500;
+}
+
+.public-wedding.plantilla2 .pw-section {
+  width: min(980px, 92%);
+  margin: 54px auto;
+  padding: 0;
+  background: transparent;
+}
+
+.public-wedding.plantilla2 .pw-section h2 {
+  margin: 0 0 14px;
+  font-size: 1.35rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.public-wedding.plantilla2 .pw-section h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 92px;
+  height: 2px;
+  background: var(--pw-accent);
+  opacity: 0.9;
+}
+
+.public-wedding.plantilla2 .pw-section p {
+  margin: 10px 0 0;
+  color: var(--pw-muted);
+  line-height: 1.8;
+}
+
+/* Programa */
+.public-wedding.plantilla2 .pw-program ul {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+  border-top: 1px solid var(--pw-line);
+}
+.public-wedding.plantilla2 .pw-program li {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--pw-line);
+}
+.public-wedding.plantilla2 .pw-program .pw-time {
+  font-weight: 900;
+}
+
+/* Cards (alojamiento/regalos) */
+.public-wedding.plantilla2 .pw-card {
+  margin-top: 14px;
+  padding: 16px 16px;
+  border-radius: var(--pw-radius);
+  background: var(--pw-surface);
+  border: 1px solid var(--pw-line);
+}
+.public-wedding.plantilla2 .pw-card h3 {
+  margin: 0 0 6px;
+  font-weight: 900;
+}
+.public-wedding.plantilla2 .pw-card.gift a {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--pw-text);
+  color: var(--pw-text);
+}
+.public-wedding.plantilla2 .pw-card.gift a:hover { text-decoration: none; opacity: 0.9; }
+
+/* Redes */
+.public-wedding.plantilla2 .pw-social-icons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.public-wedding.plantilla2 .pw-social-icons a {
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--pw-line);
+  background: var(--pw-surface);
+}
+
+/* Hashtags */
+.public-wedding.plantilla2 .pw-hashtag-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.public-wedding.plantilla2 .pw-hashtag-list span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--pw-line);
+  background: var(--pw-surface);
+}
+
+/* Galería */
+.public-wedding.plantilla2 .pw-gallery-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.public-wedding.plantilla2 .pw-gallery-grid img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--pw-line);
+}
+
+/* RSVP */
+.public-wedding.plantilla2 .pw-rsvp-card {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--pw-surface);
+  border: 1px solid var(--pw-line);
+}
+
+.public-wedding.plantilla2 .pw-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.public-wedding.plantilla2 .pw-label {
+  display: block;
+  font-weight: 900;
+  margin-top: 10px;
+}
+
+.public-wedding.plantilla2 .pw-input,
+.public-wedding.plantilla2 select,
+.public-wedding.plantilla2 textarea {
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--pw-line);
+  background: var(--pw-surface);
+  outline: none;
+}
+.public-wedding.plantilla2 .pw-input:focus,
+.public-wedding.plantilla2 select:focus,
+.public-wedding.plantilla2 textarea:focus {
+  border-color: rgba(17,17,17,0.35);
+  box-shadow: 0 0 0 4px rgba(17,17,17,0.06);
+}
+
+.public-wedding.plantilla2 .pw-btn,
+.public-wedding.plantilla2 button {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--pw-text);
+  background: var(--pw-text);
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+.public-wedding.plantilla2 .pw-btn.ghost {
+  background: transparent;
+  color: var(--pw-text);
+}
+.public-wedding.plantilla2 .pw-success { color: #1f7a4a; font-weight: 900; }
+.public-wedding.plantilla2 .pw-error { color: #b00020; font-weight: 900; margin-top: 10px; }
+
+/* Mapa */
+.public-wedding.plantilla2 .pw-map-btn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--pw-text);
+  background: var(--pw-text);
+  color: #fff;
+  font-weight: 900;
+}
+.public-wedding.plantilla2 .pw-map-btn:hover { text-decoration: none; opacity: 0.9; }
+
+@media (max-width: 980px) {
+  .public-wedding.plantilla2 .pw-gallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .public-wedding.plantilla2 .pw-gallery-grid { grid-template-columns: 1fr; }
+  .public-wedding.plantilla2 .pw-program li { grid-template-columns: 92px 1fr; }
+}
