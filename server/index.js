@@ -7,7 +7,7 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 /* =========================================================
    MIDDLEWARES
@@ -39,18 +39,26 @@ const upload = multer({ storage });
 
 /* =========================================================
    CONEXIÓN MYSQL
+   - Railway: usa MYSQLHOST/MYSQLUSER/MYSQLPASSWORD/MYSQLDATABASE/MYSQLPORT
+   - Local: fallback a DB_HOST/DB_USER/DB_PASSWORD/DB_NAME si las tienes
 ========================================================= */
 let db;
 
 (async () => {
   try {
-db = await mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: 3306,
-});
+    db = await mysql.createPool({
+      host: process.env.MYSQLHOST || process.env.DB_HOST,
+      user: process.env.MYSQLUSER || process.env.DB_USER,
+      password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
+      database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+      port: Number(process.env.MYSQLPORT || 3306),
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+    });
+
+    // Test rápido de conexión
+    await db.query("SELECT 1");
 
     console.log("✅ MySQL conectado");
   } catch (err) {
@@ -59,19 +67,25 @@ db = await mysql.createPool({
 })();
 
 /* =========================================================
+   HEALTHCHECK (útil para comprobar Railway rápido)
+========================================================= */
+app.get("/health", async (_req, res) => {
+  try {
+    if (!db) return res.status(503).json({ ok: false, db: "not_ready" });
+    await db.query("SELECT 1");
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+/* =========================================================
    AUTH — REGISTRO
 ========================================================= */
 app.post("/register", async (req, res) => {
   try {
     const body = req.body || {};
-    const {
-      name,
-      email,
-      password,
-      bride_name,
-      groom_name,
-      domain,
-    } = body;
+    const { name, email, password, bride_name, groom_name, domain } = body;
 
     if (!name || !email || !password || !domain) {
       return res.status(400).json({ message: "Datos incompletos" });
@@ -97,14 +111,14 @@ app.post("/register", async (req, res) => {
 
     res.status(201).json({ message: "Usuario creado correctamente" });
   } catch (err) {
-  console.error("REGISTER ERROR REAL:", err);
-  res.status(500).json({
-    message: "Error interno",
-    error: err.message,
-    sql: err.sqlMessage})
+    console.error("REGISTER ERROR REAL:", err);
+    res.status(500).json({
+      message: "Error interno",
+      error: err.message,
+      sql: err.sqlMessage,
+    });
   }
 });
-
 
 /* =========================================================
    AUTH — LOGIN
@@ -113,10 +127,9 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const [rows] = await db.query(
-      "SELECT * FROM users WHERE email = ?",
-      [email]
-    );
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
+      email,
+    ]);
 
     if (!rows.length) {
       return res.status(400).json({ message: "Usuario no existe" });
@@ -141,10 +154,9 @@ app.post("/login", async (req, res) => {
 ========================================================= */
 app.get("/user/info/:id", async (req, res) => {
   try {
-    const [rows] = await db.query(
-      "SELECT * FROM users WHERE id = ?",
-      [req.params.id]
-    );
+    const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [
+      req.params.id,
+    ]);
 
     if (!rows.length) {
       return res.status(404).json({ message: "Usuario no encontrado" });
@@ -170,10 +182,7 @@ app.put("/user/info/:id", async (req, res) => {
       }
     });
 
-    await db.query("UPDATE users SET ? WHERE id = ?", [
-      data,
-      req.params.id,
-    ]);
+    await db.query("UPDATE users SET ? WHERE id = ?", [data, req.params.id]);
 
     res.json({ ok: true });
   } catch (err) {
@@ -190,8 +199,10 @@ app.post("/upload-photo", upload.single("photo"), (req, res) => {
     return res.status(400).json({ message: "No se ha subido archivo" });
   }
 
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
+
   res.json({
-    imageUrl: `http://localhost:${PORT}/uploads/${req.file.filename}`,
+    imageUrl: `${baseUrl}/uploads/${req.file.filename}`,
   });
 });
 
@@ -201,6 +212,7 @@ app.post("/upload-photo", upload.single("photo"), (req, res) => {
 app.post("/public/upload-photo", upload.single("photo"), async (req, res) => {
   try {
     const { code } = req.body;
+
     if (!code || !req.file) {
       return res.status(400).json({ message: "Código o archivo faltante" });
     }
@@ -229,13 +241,15 @@ app.post("/public/upload-photo", upload.single("photo"), async (req, res) => {
       }
     }
 
-    const imageUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+
     photos.push(imageUrl);
 
-    await db.query(
-      "UPDATE users SET photos_json = ? WHERE id = ?",
-      [JSON.stringify(photos), user.id]
-    );
+    await db.query("UPDATE users SET photos_json = ? WHERE id = ?", [
+      JSON.stringify(photos),
+      user.id,
+    ]);
 
     res.json({ ok: true, imageUrl });
   } catch (err) {
@@ -249,10 +263,9 @@ app.post("/public/upload-photo", upload.single("photo"), async (req, res) => {
 ========================================================= */
 app.get("/public/:domain", async (req, res) => {
   try {
-    const [rows] = await db.query(
-      "SELECT * FROM users WHERE domain = ?",
-      [req.params.domain]
-    );
+    const [rows] = await db.query("SELECT * FROM users WHERE domain = ?", [
+      req.params.domain,
+    ]);
 
     if (!rows.length) {
       return res.status(404).json({ message: "Dominio no encontrado" });
@@ -273,10 +286,10 @@ app.put("/user/guests/:id", async (req, res) => {
     return res.status(400).json({ message: "Formato incorrecto" });
   }
 
-  await db.query(
-    "UPDATE users SET guests_json = ? WHERE id = ?",
-    [JSON.stringify(req.body.guests_json), req.params.id]
-  );
+  await db.query("UPDATE users SET guests_json = ? WHERE id = ?", [
+    JSON.stringify(req.body.guests_json),
+    req.params.id,
+  ]);
 
   res.json({ ok: true });
 });
@@ -323,10 +336,10 @@ app.post("/public/rsvp/:userId", async (req, res) => {
       responded_at: new Date().toISOString(),
     };
 
-    await db.query(
-      "UPDATE users SET guests_json = ? WHERE id = ?",
-      [JSON.stringify(guests), req.params.userId]
-    );
+    await db.query("UPDATE users SET guests_json = ? WHERE id = ?", [
+      JSON.stringify(guests),
+      req.params.userId,
+    ]);
 
     res.json({ ok: true });
   } catch (err) {
