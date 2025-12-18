@@ -62,36 +62,46 @@ db = await mysql.createPool({
    AUTH — REGISTRO
 ========================================================= */
 app.post("/register", async (req, res) => {
-  const { name, email, password, bride_name, groom_name, domain } = req.body;
-
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: "Faltan campos obligatorios" });
-  }
-
   try {
+    const body = req.body || {};
+    const {
+      name,
+      email,
+      password,
+      bride_name,
+      groom_name,
+      domain,
+    } = body;
+
+    if (!name || !email || !password || !domain) {
+      return res.status(400).json({ message: "Datos incompletos" });
+    }
+
     const [exists] = await db.query(
-      "SELECT id FROM users WHERE email = ?",
-      [email]
+      "SELECT id FROM users WHERE email = ? OR domain = ?",
+      [email, domain]
     );
 
     if (exists.length) {
-      return res.status(409).json({ message: "El correo ya está registrado" });
+      return res.status(409).json({ message: "Usuario o dominio ya existe" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hash = await bcrypt.hash(String(password), 10);
 
-    const [result] = await db.query(
-      `INSERT INTO users (name, email, password, bride_name, groom_name, domain)
+    await db.query(
+      `INSERT INTO users 
+       (name, email, password, bride_name, groom_name, domain) 
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, email, hashedPassword, bride_name, groom_name, domain]
+      [name, email, hash, bride_name, groom_name, domain]
     );
 
-    res.status(201).json({ id: result.insertId });
+    res.status(201).json({ message: "Usuario creado correctamente" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error en el servidor" });
+    console.error("REGISTER ERROR:", err);
+    res.status(500).json({ message: "Error interno" });
   }
 });
+
 
 /* =========================================================
    AUTH — LOGIN
