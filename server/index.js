@@ -96,14 +96,14 @@ app.post("/register", async (req, res) => {
     );
 
     res.status(201).json({ message: "Usuario creado correctamente" });
-  } } catch (err) {
+  } catch (err) {
   console.error("REGISTER ERROR REAL:", err);
   res.status(500).json({
     message: "Error interno",
     error: err.message,
-    sql: err.sqlMessage
-  });
-
+    sql: err.sqlMessage})
+  }
+});
 
 
 /* =========================================================
