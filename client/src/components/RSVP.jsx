@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import axios from "axios";
+import api from "../api";
 
 /* =========================
    ALERGIAS FIJAS
@@ -178,7 +178,8 @@ export default function RSVPForm({
     setStatus(null);
 
     try {
-      await axios.post(`http://localhost:3001/public/rsvp/${userId}`, {
+      await api.post(`/public/rsvp/${userId}`, {
+
         code,
         attending,
         attendees,
@@ -262,9 +263,7 @@ export default function RSVPForm({
           <label>Menú</label>
           <select
             value={people[currentPerson].menu}
-            onChange={(e) =>
-              updateCurrentPerson({ menu: e.target.value })
-            }
+            onChange={(e) => updateCurrentPerson({ menu: e.target.value })}
           >
             <option value="">Selecciona menú</option>
             {menuOptions.map((m) => (
@@ -277,9 +276,7 @@ export default function RSVPForm({
           <label>Alergias</label>
           <select
             value={people[currentPerson].allergy}
-            onChange={(e) =>
-              updateCurrentPerson({ allergy: e.target.value })
-            }
+            onChange={(e) => updateCurrentPerson({ allergy: e.target.value })}
           >
             {ALLERGY_OPTIONS.map((a) => (
               <option key={a.value} value={a.value}>
@@ -300,10 +297,7 @@ export default function RSVPForm({
       {step === 5 && (
         <div className="pw-rsvp-card">
           <label>Notas adicionales (opcional)</label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
+          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
           <button onClick={onSubmit} disabled={saving}>
             {saving ? "Guardando..." : "Confirmar asistencia"}
           </button>
@@ -320,9 +314,7 @@ export default function RSVPForm({
         </div>
       )}
 
-      {status?.type === "error" && (
-        <p className="pw-error">{status.text}</p>
-      )}
+      {status?.type === "error" && <p className="pw-error">{status.text}</p>}
     </section>
   );
 }

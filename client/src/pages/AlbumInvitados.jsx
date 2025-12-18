@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "../styles/AlbumInvitados.css";
 
 function AlbumInvitados() {
@@ -10,8 +10,8 @@ function AlbumInvitados() {
   useEffect(() => {
     if (!userId) return;
 
-    axios
-      .get(`http://localhost:3001/user/info/${userId}`)
+    api.get(`/user/info/${userId}`)
+
       .then((res) => {
         setPhotos(res.data.photos_json || []);
       })
@@ -24,7 +24,7 @@ function AlbumInvitados() {
     const nuevasFotos = photos.filter((p) => p !== photoUrl);
 
     try {
-      await axios.put(`http://localhost:3001/user/info/${userId}`, {
+      await api.put(`/user/info/${userId}`, {
         photos_json: nuevasFotos,
       });
       setPhotos(nuevasFotos);
@@ -62,4 +62,3 @@ function AlbumInvitados() {
 }
 
 export default AlbumInvitados;
-

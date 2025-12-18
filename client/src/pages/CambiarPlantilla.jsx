@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import "../styles/CambiarPlantilla.css";
 
 // ✅ Importa las imágenes (Vite/React las empaqueta y ya no dependes de /public)
@@ -58,8 +58,8 @@ function CambiarPlantilla() {
     }
 
     setLoadingTemplate(true);
-    axios
-      .get(`http://localhost:3001/user/info/${userId}`)
+    api.get(`/user/info/${userId}`)
+
       .then((res) => {
         setSelected(res.data.selected_template || "plantilla1");
       })
@@ -83,15 +83,20 @@ function CambiarPlantilla() {
     setSaving(true);
     setStatus(null);
 
-    axios
-      .put(`http://localhost:3001/user/info/${userId}`, {
+    api.put(`/user/info/${userId}`, {
         selected_template: selected,
       })
       .then(() => {
-        setStatus({ type: "success", text: "Plantilla actualizada correctamente." });
+        setStatus({
+          type: "success",
+          text: "Plantilla actualizada correctamente.",
+        });
       })
       .catch(() => {
-        setStatus({ type: "error", text: "Ha ocurrido un error al guardar la plantilla." });
+        setStatus({
+          type: "error",
+          text: "Ha ocurrido un error al guardar la plantilla.",
+        });
       })
       .finally(() => {
         setSaving(false);
@@ -110,7 +115,9 @@ function CambiarPlantilla() {
   return (
     <div className="plantilla-container-preview">
       <h2 className="title">Elige tu plantilla 💍</h2>
-      <p className="subtitle">Previsualiza en tiempo real cómo quedará tu web de boda.</p>
+      <p className="subtitle">
+        Previsualiza en tiempo real cómo quedará tu web de boda.
+      </p>
 
       <div className="selector-layout">
         {/* MINIATURAS */}
@@ -119,7 +126,9 @@ function CambiarPlantilla() {
             <button
               key={p.id}
               type="button"
-              className={`plantilla-thumb-card ${selected === p.id ? "active" : ""}`}
+              className={`plantilla-thumb-card ${
+                selected === p.id ? "active" : ""
+              }`}
               onClick={() => setSelected(p.id)}
             >
               <div className="plantilla-thumb-inner laser-box">
@@ -133,7 +142,9 @@ function CambiarPlantilla() {
                   }}
                 />
                 <p className="plantilla-thumb-name">{p.nombre}</p>
-                {p.descripcion && <p className="plantilla-thumb-desc">{p.descripcion}</p>}
+                {p.descripcion && (
+                  <p className="plantilla-thumb-desc">{p.descripcion}</p>
+                )}
 
                 {selected === p.id && (
                   <span className="plantilla-badge-actual">Seleccionada</span>
@@ -147,7 +158,9 @@ function CambiarPlantilla() {
         <div className="vista-previa">
           <div className="vista-previa-header">
             <h3>Vista previa interactiva</h3>
-            {loadingTemplate && <span className="preview-loading">Cargando…</span>}
+            {loadingTemplate && (
+              <span className="preview-loading">Cargando…</span>
+            )}
           </div>
 
           <div className="iframe-wrapper">
@@ -159,7 +172,9 @@ function CambiarPlantilla() {
             />
           </div>
 
-          <p className="preview-helper-text">Haz scroll dentro de la vista previa.</p>
+          <p className="preview-helper-text">
+            Haz scroll dentro de la vista previa.
+          </p>
         </div>
       </div>
 
@@ -173,11 +188,16 @@ function CambiarPlantilla() {
         <div className="label">Tu enlace público</div>
 
         <div className="url-box">
-          <input value={`https://tudominio.com/${user?.domain || ""}`} readOnly />
+          <input
+            value={`https://tudominio.com/${user?.domain || ""}`}
+            readOnly
+          />
           <button
             className="btn-copy"
             onClick={() =>
-              navigator.clipboard.writeText(`https://tudominio.com/${user?.domain || ""}`)
+              navigator.clipboard.writeText(
+                `https://tudominio.com/${user?.domain || ""}`
+              )
             }
           >
             Copiar
@@ -186,7 +206,9 @@ function CambiarPlantilla() {
 
         <button
           className="btn-open"
-          onClick={() => window.open(`http://localhost:5173/${user?.domain || ""}`, "_blank")}
+          onClick={() =>
+            window.open(`/${user?.domain || ""}`, "_blank")
+          }
         >
           Abrir web
         </button>

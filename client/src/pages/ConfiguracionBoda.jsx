@@ -1,6 +1,6 @@
 import "../styles/ConfiguracionBoda.css";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import { useAuth } from "../context/AuthContext";
 
 function ConfiguracionBoda() {
@@ -31,7 +31,7 @@ function ConfiguracionBoda() {
     instagram: "",
     tiktok: "",
 
-      // 🔽 NUEVO — MENÚS
+    // 🔽 NUEVO — MENÚS
     menu_options_json: [],
 
     // Listas dinámicas
@@ -99,7 +99,7 @@ function ConfiguracionBoda() {
 
     const load = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/user/info/${userId}`);
+        const res = await api.get(`/user/info/${userId}`);
         const d = res.data || {};
 
         setInfo({
@@ -107,8 +107,12 @@ function ConfiguracionBoda() {
           bride_name: d.bride_name || "",
           groom_name: d.groom_name || "",
           phone: d.phone || "",
-          wedding_date: d.wedding_date ? String(d.wedding_date).slice(0, 10) : "",
-          wedding_time: d.wedding_time ? String(d.wedding_time).slice(0, 5) : "",
+          wedding_date: d.wedding_date
+            ? String(d.wedding_date).slice(0, 10)
+            : "",
+          wedding_time: d.wedding_time
+            ? String(d.wedding_time).slice(0, 5)
+            : "",
           city: d.city || "",
           venue_name: d.venue_name || "",
           venue_address: d.venue_address || "",
@@ -128,7 +132,7 @@ function ConfiguracionBoda() {
           gift_list_json: parseJson(d.gift_list_json),
           hashtags_json: parseJson(d.hashtags_json),
 
-  // 🔽 MENÚS
+          // 🔽 MENÚS
           menu_options_json: parseJson(d.menu_options_json),
 
           // RSVP (solo config)
@@ -211,9 +215,9 @@ function ConfiguracionBoda() {
         payload = { hashtags_json: info.hashtags_json };
         break;
 
-       case "menus":
-  payload = { menu_options_json: info.menu_options_json };
-  break;
+      case "menus":
+        payload = { menu_options_json: info.menu_options_json };
+        break;
 
       case "rsvp":
         payload = {
@@ -243,7 +247,7 @@ function ConfiguracionBoda() {
     }
 
     try {
-      await axios.put(`http://localhost:3001/user/info/${userId}`, payload);
+      await api.put(`/user/info/${userId}`, payload);
       setMessage(section, "Cambios guardados 💗");
     } catch (e) {
       console.error("Error guardando sección:", section, e);
@@ -336,40 +340,40 @@ function ConfiguracionBoda() {
     const updated = (info.hashtags_json || []).filter((_, i) => i !== index);
     setInfo({ ...info, hashtags_json: updated });
   };
-/* ===================== MENÚS ===================== */
+  /* ===================== MENÚS ===================== */
 
-const addMenu = () => {
-  setInfo((prev) => ({
-    ...prev,
-    menu_options_json: [
-      ...(prev.menu_options_json || []),
-      {
-        id: crypto.randomUUID(),
-        label: "",
-      },
-    ],
-  }));
-};
+  const addMenu = () => {
+    setInfo((prev) => ({
+      ...prev,
+      menu_options_json: [
+        ...(prev.menu_options_json || []),
+        {
+          id: crypto.randomUUID(),
+          label: "",
+        },
+      ],
+    }));
+  };
 
-const updateMenu = (index, value) => {
-  const updated = [...(info.menu_options_json || [])];
-  updated[index] = { ...updated[index], label: value };
-  setInfo({ ...info, menu_options_json: updated });
-};
+  const updateMenu = (index, value) => {
+    const updated = [...(info.menu_options_json || [])];
+    updated[index] = { ...updated[index], label: value };
+    setInfo({ ...info, menu_options_json: updated });
+  };
 
-const deleteMenu = (index) => {
-  const updated = (info.menu_options_json || []).filter(
-    (_, i) => i !== index
-  );
-  setInfo({ ...info, menu_options_json: updated });
-};
+  const deleteMenu = (index) => {
+    const updated = (info.menu_options_json || []).filter(
+      (_, i) => i !== index
+    );
+    setInfo({ ...info, menu_options_json: updated });
+  };
 
   /* ===================== UPLOAD PHOTOS ===================== */
 
   const uploadSinglePhoto = async (file) => {
     const formData = new FormData();
     formData.append("photo", file);
-    const res = await axios.post("http://localhost:3001/upload-photo", formData, {
+    const res = await api.post("/upload-photo", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return res.data.imageUrl;
@@ -384,9 +388,10 @@ const deleteMenu = (index) => {
       setPreviewProfile(URL.createObjectURL(file));
       setInfo((prev) => ({ ...prev, profile_photo: url }));
 
-      await axios.put(`http://localhost:3001/user/info/${userId}`, {
-        profile_photo: url,
-      });
+      await api.put(`/user/info/${userId}`, {
+  profile_photo: url,
+});
+
 
       setMessage("fotos", "Foto de perfil actualizada 💗");
     } catch (err) {
@@ -406,9 +411,10 @@ const deleteMenu = (index) => {
       setPreviewCover(URL.createObjectURL(file));
       setInfo((prev) => ({ ...prev, cover_photo: url }));
 
-      await axios.put(`http://localhost:3001/user/info/${userId}`, {
-        cover_photo: url,
-      });
+      await api.put(`/user/info/${userId}`, {
+  cover_photo: url,
+});
+
 
       setMessage("fotos", "Foto de portada actualizada 💗");
     } catch (err) {
@@ -433,9 +439,10 @@ const deleteMenu = (index) => {
       const newPhotos = [...(info.photos_json || []), ...uploadedUrls];
       setInfo((prev) => ({ ...prev, photos_json: newPhotos }));
 
-      await axios.put(`http://localhost:3001/user/info/${userId}`, {
-        photos_json: newPhotos,
-      });
+      await api.put(`/user/info/${userId}`, {
+  photos_json: newPhotos,
+});
+
 
       setMessage("fotos", "Galería actualizada 💗");
     } catch (err) {
@@ -451,9 +458,10 @@ const deleteMenu = (index) => {
     setInfo((prev) => ({ ...prev, photos_json: updated }));
 
     try {
-      await axios.put(`http://localhost:3001/user/info/${userId}`, {
-        photos_json: updated,
-      });
+     await api.put(`/user/info/${userId}`, {
+  photos_json: updated,
+});
+
       setMessage("fotos", "Foto eliminada 💗");
     } catch (err) {
       console.error("Error eliminando foto:", err);
@@ -493,7 +501,12 @@ const deleteMenu = (index) => {
 
           <label className="btn-foto">
             Cambiar foto
-            <input type="file" accept="image/*" hidden onChange={handleProfileUpload} />
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={handleProfileUpload}
+            />
           </label>
         </div>
 
@@ -520,7 +533,9 @@ const deleteMenu = (index) => {
           </button>
 
           <button
-            className={`menu-item ${activeTab === "alojamiento" ? "active" : ""}`}
+            className={`menu-item ${
+              activeTab === "alojamiento" ? "active" : ""
+            }`}
             onClick={() => setActiveTab("alojamiento")}
           >
             <span>Alojamiento</span>
@@ -547,15 +562,14 @@ const deleteMenu = (index) => {
             <span>Hashtags</span>
           </button>
 
-<button
-  className={`menu-item ${activeTab === "menus" ? "active" : ""}`}
-  onClick={() => setActiveTab("menus")}
->
-  <span>Menús</span>
-</button>
+          <button
+            className={`menu-item ${activeTab === "menus" ? "active" : ""}`}
+            onClick={() => setActiveTab("menus")}
+          >
+            <span>Menús</span>
+          </button>
 
-
-                    <button
+          <button
             className={`menu-item ${activeTab === "rsvp" ? "active" : ""}`}
             onClick={() => setActiveTab("rsvp")}
           >
@@ -590,7 +604,9 @@ const deleteMenu = (index) => {
                 <label>Nombre 1</label>
                 <input
                   value={info.bride_name}
-                  onChange={(e) => setInfo({ ...info, bride_name: e.target.value })}
+                  onChange={(e) =>
+                    setInfo({ ...info, bride_name: e.target.value })
+                  }
                 />
               </div>
 
@@ -598,7 +614,9 @@ const deleteMenu = (index) => {
                 <label>Nombre 2</label>
                 <input
                   value={info.groom_name}
-                  onChange={(e) => setInfo({ ...info, groom_name: e.target.value })}
+                  onChange={(e) =>
+                    setInfo({ ...info, groom_name: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -615,7 +633,9 @@ const deleteMenu = (index) => {
                 <input
                   type="date"
                   value={info.wedding_date}
-                  onChange={(e) => setInfo({ ...info, wedding_date: e.target.value })}
+                  onChange={(e) =>
+                    setInfo({ ...info, wedding_date: e.target.value })
+                  }
                 />
               </div>
 
@@ -624,7 +644,9 @@ const deleteMenu = (index) => {
                 <input
                   type="time"
                   value={info.wedding_time}
-                  onChange={(e) => setInfo({ ...info, wedding_time: e.target.value })}
+                  onChange={(e) =>
+                    setInfo({ ...info, wedding_time: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -642,7 +664,9 @@ const deleteMenu = (index) => {
                 <label>Lugar de la celebración</label>
                 <input
                   value={info.venue_name}
-                  onChange={(e) => setInfo({ ...info, venue_name: e.target.value })}
+                  onChange={(e) =>
+                    setInfo({ ...info, venue_name: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -650,7 +674,9 @@ const deleteMenu = (index) => {
             <label>Dirección del lugar</label>
             <input
               value={info.venue_address}
-              onChange={(e) => setInfo({ ...info, venue_address: e.target.value })}
+              onChange={(e) =>
+                setInfo({ ...info, venue_address: e.target.value })
+              }
             />
 
             <label>Enlace a Google Maps</label>
@@ -665,7 +691,9 @@ const deleteMenu = (index) => {
               onClick={() => guardarSeccion("info")}
               disabled={savingSection === "info"}
             >
-              {savingSection === "info" ? "Guardando..." : "Guardar datos generales"}
+              {savingSection === "info"
+                ? "Guardando..."
+                : "Guardar datos generales"}
             </button>
 
             {msg.info && <p className="save-msg">{msg.info}</p>}
@@ -680,7 +708,9 @@ const deleteMenu = (index) => {
             <label>Título</label>
             <input
               value={info.story_title}
-              onChange={(e) => setInfo({ ...info, story_title: e.target.value })}
+              onChange={(e) =>
+                setInfo({ ...info, story_title: e.target.value })
+              }
             />
 
             <label>Descripción</label>
@@ -701,7 +731,9 @@ const deleteMenu = (index) => {
               onClick={() => guardarSeccion("historia")}
               disabled={savingSection === "historia"}
             >
-              {savingSection === "historia" ? "Guardando..." : "Guardar historia"}
+              {savingSection === "historia"
+                ? "Guardando..."
+                : "Guardar historia"}
             </button>
 
             {msg.historia && <p className="save-msg">{msg.historia}</p>}
@@ -721,7 +753,9 @@ const deleteMenu = (index) => {
                     <input
                       placeholder="17:00"
                       value={item.time || ""}
-                      onChange={(e) => updateProgramItem(index, "time", e.target.value)}
+                      onChange={(e) =>
+                        updateProgramItem(index, "time", e.target.value)
+                      }
                     />
                   </div>
 
@@ -737,7 +771,11 @@ const deleteMenu = (index) => {
                   </div>
                 </div>
 
-                <button type="button" className="btn-delete" onClick={() => deleteProgramItem(index)}>
+                <button
+                  type="button"
+                  className="btn-delete"
+                  onClick={() => deleteProgramItem(index)}
+                >
                   Eliminar
                 </button>
               </div>
@@ -753,7 +791,9 @@ const deleteMenu = (index) => {
               onClick={() => guardarSeccion("programa")}
               disabled={savingSection === "programa"}
             >
-              {savingSection === "programa" ? "Guardando..." : "Guardar programa"}
+              {savingSection === "programa"
+                ? "Guardando..."
+                : "Guardar programa"}
             </button>
 
             {msg.programa && <p className="save-msg">{msg.programa}</p>}
@@ -770,23 +810,33 @@ const deleteMenu = (index) => {
                 <label>Hotel</label>
                 <input
                   value={item.hotel || ""}
-                  onChange={(e) => updateLodgingItem(index, "hotel", e.target.value)}
+                  onChange={(e) =>
+                    updateLodgingItem(index, "hotel", e.target.value)
+                  }
                 />
 
                 <label>Dirección</label>
                 <input
                   value={item.address || ""}
-                  onChange={(e) => updateLodgingItem(index, "address", e.target.value)}
+                  onChange={(e) =>
+                    updateLodgingItem(index, "address", e.target.value)
+                  }
                 />
 
                 <label>Precio aprox.</label>
                 <input
                   placeholder="100€ / noche"
                   value={item.price || ""}
-                  onChange={(e) => updateLodgingItem(index, "price", e.target.value)}
+                  onChange={(e) =>
+                    updateLodgingItem(index, "price", e.target.value)
+                  }
                 />
 
-                <button type="button" className="btn-delete" onClick={() => deleteLodgingItem(index)}>
+                <button
+                  type="button"
+                  className="btn-delete"
+                  onClick={() => deleteLodgingItem(index)}
+                >
                   Eliminar
                 </button>
               </div>
@@ -802,7 +852,9 @@ const deleteMenu = (index) => {
               onClick={() => guardarSeccion("alojamiento")}
               disabled={savingSection === "alojamiento"}
             >
-              {savingSection === "alojamiento" ? "Guardando..." : "Guardar alojamiento"}
+              {savingSection === "alojamiento"
+                ? "Guardando..."
+                : "Guardar alojamiento"}
             </button>
 
             {msg.alojamiento && <p className="save-msg">{msg.alojamiento}</p>}
@@ -819,24 +871,34 @@ const deleteMenu = (index) => {
                 <label>Nombre del regalo</label>
                 <input
                   value={item.name || ""}
-                  onChange={(e) => updateGiftItem(index, "name", e.target.value)}
+                  onChange={(e) =>
+                    updateGiftItem(index, "name", e.target.value)
+                  }
                 />
 
                 <label>Enlace</label>
                 <input
                   placeholder="https://..."
                   value={item.link || ""}
-                  onChange={(e) => updateGiftItem(index, "link", e.target.value)}
+                  onChange={(e) =>
+                    updateGiftItem(index, "link", e.target.value)
+                  }
                 />
 
                 <label>Precio aprox.</label>
                 <input
                   placeholder="150€"
                   value={item.price || ""}
-                  onChange={(e) => updateGiftItem(index, "price", e.target.value)}
+                  onChange={(e) =>
+                    updateGiftItem(index, "price", e.target.value)
+                  }
                 />
 
-                <button type="button" className="btn-delete" onClick={() => deleteGiftItem(index)}>
+                <button
+                  type="button"
+                  className="btn-delete"
+                  onClick={() => deleteGiftItem(index)}
+                >
                   Eliminar
                 </button>
               </div>
@@ -852,7 +914,9 @@ const deleteMenu = (index) => {
               onClick={() => guardarSeccion("regalos")}
               disabled={savingSection === "regalos"}
             >
-              {savingSection === "regalos" ? "Guardando..." : "Guardar lista de regalos"}
+              {savingSection === "regalos"
+                ? "Guardando..."
+                : "Guardar lista de regalos"}
             </button>
 
             {msg.regalos && <p className="save-msg">{msg.regalos}</p>}
@@ -904,7 +968,11 @@ const deleteMenu = (index) => {
                   value={tag || ""}
                   onChange={(e) => updateHashtag(index, e.target.value)}
                 />
-                <button type="button" className="btn-delete" onClick={() => deleteHashtag(index)}>
+                <button
+                  type="button"
+                  className="btn-delete"
+                  onClick={() => deleteHashtag(index)}
+                >
                   Eliminar
                 </button>
               </div>
@@ -920,7 +988,9 @@ const deleteMenu = (index) => {
               onClick={() => guardarSeccion("hashtags")}
               disabled={savingSection === "hashtags"}
             >
-              {savingSection === "hashtags" ? "Guardando..." : "Guardar hashtags"}
+              {savingSection === "hashtags"
+                ? "Guardando..."
+                : "Guardar hashtags"}
             </button>
 
             {msg.hashtags && <p className="save-msg">{msg.hashtags}</p>}
@@ -943,7 +1013,9 @@ const deleteMenu = (index) => {
             <textarea
               rows={5}
               value={info.rsvp_message}
-              onChange={(e) => setInfo({ ...info, rsvp_message: e.target.value })}
+              onChange={(e) =>
+                setInfo({ ...info, rsvp_message: e.target.value })
+              }
             />
 
             <button
@@ -1053,7 +1125,12 @@ const deleteMenu = (index) => {
 
               <label className="btn-secundario">
                 Cambiar portada
-                <input type="file" accept="image/*" hidden onChange={handleCoverUpload} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleCoverUpload}
+                />
               </label>
             </div>
 
@@ -1121,20 +1198,14 @@ const deleteMenu = (index) => {
 
             {msg.fotos && <p className="save-msg">{msg.fotos}</p>}
           </div>
-
-
-
-
-
-
-
-        )}{activeTab === "menus" && (
+        )}
+        {activeTab === "menus" && (
           <div className="config-card">
             <h2>Menús disponibles</h2>
             <p>Estos menús aparecerán en el formulario RSVP.</p>
 
-{(info.menu_options_json || []).map((m, i) => (
-  <div key={m.id || i} className="sub-card">
+            {(info.menu_options_json || []).map((m, i) => (
+              <div key={m.id || i} className="sub-card">
                 <label>Nombre del menú</label>
                 <input
                   placeholder="Ej: Menú vegetariano"
@@ -1156,12 +1227,11 @@ const deleteMenu = (index) => {
               onClick={() => guardarSeccion("menus")}
             >
               Guardar menús
-
             </button>
 
             {msg.menus && <p className="save-msg">{msg.menus}</p>}
           </div>
-         )}
+        )}
       </main>
     </div>
   );

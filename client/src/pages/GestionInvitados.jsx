@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "../styles/GestionInvitados.css";
 
 function generarId(invitados) {
@@ -25,9 +25,9 @@ function GestionInvitados() {
   useEffect(() => {
     if (!userId) return;
 
-    axios
-      .get(`http://localhost:3001/user/info/${userId}`)
-      .then(res => {
+   api.get(`/user/info/${userId}`)
+
+      .then((res) => {
         setInvitados(res.data.guests_json || []);
       })
       .finally(() => setLoading(false));
@@ -38,7 +38,7 @@ function GestionInvitados() {
   ========================= */
   const guardarInvitados = async (lista) => {
     setInvitados(lista);
-    await axios.put(`http://localhost:3001/user/guests/${userId}`, {
+    await api.put(`/user/guests/${userId}`, {
       guests_json: lista,
     });
   };
@@ -68,7 +68,7 @@ function GestionInvitados() {
      ELIMINAR INVITADO
   ========================= */
   const eliminarInvitado = async (id) => {
-    const nuevaLista = invitados.filter(i => i.id !== id);
+    const nuevaLista = invitados.filter((i) => i.id !== id);
     await guardarInvitados(nuevaLista);
   };
 
@@ -94,18 +94,18 @@ function GestionInvitados() {
           <p className="empty">No hay invitados todavía</p>
         )}
 
-        {invitados.map(inv => (
+        {invitados.map((inv) => (
           <div key={inv.id} className="guest-card">
             <div>
               <strong>{inv.name}</strong>
               <p>ID: {inv.id}</p>
-              <p>Código: <span className="code">{inv.code}</span></p>
+              <p>
+                Código: <span className="code">{inv.code}</span>
+              </p>
               <p>Estado: {inv.confirmed ? "Confirmado" : "Pendiente"}</p>
             </div>
 
-            <button onClick={() => eliminarInvitado(inv.id)}>
-              Eliminar
-            </button>
+            <button onClick={() => eliminarInvitado(inv.id)}>Eliminar</button>
           </div>
         ))}
       </div>

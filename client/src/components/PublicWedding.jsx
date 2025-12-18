@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 import GuestAlbum from "./GuestAlbum";
 import RSVPForm from "./RSVP";
 
@@ -30,14 +30,11 @@ function PublicWedding() {
         let res;
 
         if (id) {
-          res = await axios.get(
-            `http://localhost:3001/user/info/${id}`
-          );
+          res = await api.get(`/user/info/${id}`);
+
         } else if (domain) {
-          res = await axios.get(
-            `http://localhost:3001/public/${domain}`
-          );
-        } else {
+        res = await api.get(`/public/${domain}`);
+
           throw new Error("No hay id ni domain");
         }
 
@@ -79,7 +76,9 @@ function PublicWedding() {
       <header
         className="pw-cover"
         style={{
-          backgroundImage: `url(${data.cover_photo || data.profile_photo || ""})`,
+          backgroundImage: `url(${
+            data.cover_photo || data.profile_photo || ""
+          })`,
         }}
       >
         <div className="pw-overlay">
@@ -215,32 +214,30 @@ function PublicWedding() {
           {/* =========================
     ÁLBUM DE INVITADOS (SUBIDA DE FOTOS)
 ========================= */}
-<GuestAlbum
-  enabled={data.guest_upload_enabled}
-  message={data.guest_upload_message}
-/>
-
+          <GuestAlbum
+            enabled={data.guest_upload_enabled}
+            message={data.guest_upload_message}
+          />
         </section>
       )}
 
       {/* =========================
           RSVP
       ========================= */}
-{/* =========================
+      {/* =========================
     RSVP
 ========================= */}
-{(data.rsvp_message || data.rsvp_email) && (
-  <section className="pw-section pw-rsvp">
-    <RSVPForm
-      userId={data.id}
-      guestsJson={data.guests_json}
-      menuOptionsJson={data.menu_options_json}   
-      title="Confirmación de asistencia"
-      message={data.rsvp_message}
-    />
-  </section>
-)}
-
+      {(data.rsvp_message || data.rsvp_email) && (
+        <section className="pw-section pw-rsvp">
+          <RSVPForm
+            userId={data.id}
+            guestsJson={data.guests_json}
+            menuOptionsJson={data.menu_options_json}
+            title="Confirmación de asistencia"
+            message={data.rsvp_message}
+          />
+        </section>
+      )}
 
       {/* =========================
           MAPA

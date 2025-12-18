@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "../styles/GuestAlbum.css";
 
 function GuestAlbum({ enabled, message }) {
@@ -22,11 +22,7 @@ function GuestAlbum({ enabled, message }) {
 
     try {
       setLoading(true);
-      await axios.post(
-        "http://localhost:3001/public/upload-photo",
-        formData
-      );
-      setStatus("¡Foto subida con éxito! 💗");
+     await api.post("/public/upload-photo", formData);
       setPhoto(null);
     } catch {
       setStatus("Código incorrecto o error al subir");
