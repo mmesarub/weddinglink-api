@@ -44,12 +44,14 @@ let db;
 
 (async () => {
   try {
-    db = await mysql.createPool({
-      host: "127.0.0.1",
-      user: "root",
-      password: "MiMysql2025!",
-      database: "weddinglink_db",
-    });
+db = await mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: 3306,
+});
+
     console.log("✅ MySQL conectado");
   } catch (err) {
     console.error("❌ Error conectando a MySQL", err);
