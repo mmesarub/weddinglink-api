@@ -38,35 +38,38 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* =========================================================
-   CONEXIÓN MYSQL (Railway)
+   CONEXIÓN MYSQL (ROBUSTA PARA RAILWAY)
 ========================================================= */
-let db;
+let db = null;
 
-(async () => {
+async function connectDB(retries = 5) {
   try {
-  db = await mysql.createPool({
-  host: process.env.MYSQLHOST,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
-  port: Number(process.env.MYSQLPORT || 3306),
-  ssl: false
-});
+    db = await mysql.createPool({
+      host: process.env.MYSQLHOST,
+      user: process.env.MYSQLUSER,
+      password: process.env.MYSQLPASSWORD,
+      database: process.env.MYSQLDATABASE,
+      port: Number(process.env.MYSQLPORT || 3306),
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+    });
 
-
-    // prueba real de conexión
     await db.query("SELECT 1");
-
     console.log("✅ MySQL conectado");
   } catch (err) {
-    console.error("❌ Error conectando a MySQL", err);
+    console.error("❌ Error conectando a MySQL:", err.message);
+    if (retries > 0) {
+      console.log("⏳ Reintentando conexión en 5s...");
+      setTimeout(() => connectDB(retries - 1), 5000);
+    }
   }
-})();
+}
 
-
+connectDB();
 
 /* =========================================================
-   HEALTHCHECK (útil para comprobar Railway rápido)
+   HEALTHCHECK
 ========================================================= */
 app.get("/health", async (_req, res) => {
   try {
@@ -83,8 +86,9 @@ app.get("/health", async (_req, res) => {
 ========================================================= */
 app.post("/register", async (req, res) => {
   try {
-    const body = req.body || {};
-    const { name, email, password, bride_name, groom_name, domain } = body;
+    if (!db) return res.status(503).json({ message: "BD no disponible" });
+
+    const { name, email, password, bride_name, groom_name, domain } = req.body;
 
     if (!name || !email || !password || !domain) {
       return res.status(400).json({ message: "Datos incompletos" });
@@ -103,19 +107,15 @@ app.post("/register", async (req, res) => {
 
     await db.query(
       `INSERT INTO users 
-       (name, email, password, bride_name, groom_name, domain) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
+      (name, email, password, bride_name, groom_name, domain) 
+      VALUES (?, ?, ?, ?, ?, ?)`,
       [name, email, hash, bride_name, groom_name, domain]
     );
 
     res.status(201).json({ message: "Usuario creado correctamente" });
   } catch (err) {
-    console.error("REGISTER ERROR REAL:", err);
-    res.status(500).json({
-      message: "Error interno",
-      error: err.message,
-      sql: err.sqlMessage,
-    });
+    console.error("REGISTER ERROR:", err);
+    res.status(500).json({ message: "Error interno" });
   }
 });
 
@@ -123,12 +123,13 @@ app.post("/register", async (req, res) => {
    AUTH — LOGIN
 ========================================================= */
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
+    const { email, password } = req.body;
+
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
 
     if (!rows.length) {
       return res.status(400).json({ message: "Usuario no existe" });
@@ -153,9 +154,10 @@ app.post("/login", async (req, res) => {
 ========================================================= */
 app.get("/user/info/:id", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [
-      req.params.id,
-    ]);
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE id = ?",
+      [req.params.id]
+    );
 
     if (!rows.length) {
       return res.status(404).json({ message: "Usuario no encontrado" });
@@ -163,7 +165,6 @@ app.get("/user/info/:id", async (req, res) => {
 
     res.json(rows[0]);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Error en el servidor" });
   }
 });
@@ -181,11 +182,13 @@ app.put("/user/info/:id", async (req, res) => {
       }
     });
 
-    await db.query("UPDATE users SET ? WHERE id = ?", [data, req.params.id]);
+    await db.query("UPDATE users SET ? WHERE id = ?", [
+      data,
+      req.params.id,
+    ]);
 
     res.json({ ok: true });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Error en el servidor" });
   }
 });
@@ -199,19 +202,15 @@ app.post("/upload-photo", upload.single("photo"), (req, res) => {
   }
 
   const baseUrl = `${req.protocol}://${req.get("host")}`;
-
-  res.json({
-    imageUrl: `${baseUrl}/uploads/${req.file.filename}`,
-  });
+  res.json({ imageUrl: `${baseUrl}/uploads/${req.file.filename}` });
 });
 
 /* =========================================================
-   SUBIR FOTO — INVITADOS (SOLO guest_upload_code)
+   SUBIR FOTO — INVITADOS
 ========================================================= */
 app.post("/public/upload-photo", upload.single("photo"), async (req, res) => {
   try {
     const { code } = req.body;
-
     if (!code || !req.file) {
       return res.status(400).json({ message: "Código o archivo faltante" });
     }
@@ -228,16 +227,10 @@ app.post("/public/upload-photo", upload.single("photo"), async (req, res) => {
     }
 
     const user = rows[0];
-
     let photos = [];
-    if (Array.isArray(user.photos_json)) {
-      photos = user.photos_json;
-    } else if (typeof user.photos_json === "string" && user.photos_json.trim()) {
-      try {
-        photos = JSON.parse(user.photos_json);
-      } catch {
-        photos = [];
-      }
+
+    if (typeof user.photos_json === "string" && user.photos_json.trim()) {
+      photos = JSON.parse(user.photos_json);
     }
 
     const baseUrl = `${req.protocol}://${req.get("host")}`;
@@ -245,14 +238,13 @@ app.post("/public/upload-photo", upload.single("photo"), async (req, res) => {
 
     photos.push(imageUrl);
 
-    await db.query("UPDATE users SET photos_json = ? WHERE id = ?", [
-      JSON.stringify(photos),
-      user.id,
-    ]);
+    await db.query(
+      "UPDATE users SET photos_json = ? WHERE id = ?",
+      [JSON.stringify(photos), user.id]
+    );
 
     res.json({ ok: true, imageUrl });
   } catch (err) {
-    console.error("❌ Error subida invitado:", err);
     res.status(500).json({ message: "Error subiendo imagen" });
   }
 });
@@ -262,9 +254,10 @@ app.post("/public/upload-photo", upload.single("photo"), async (req, res) => {
 ========================================================= */
 app.get("/public/:domain", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM users WHERE domain = ?", [
-      req.params.domain,
-    ]);
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE domain = ?",
+      [req.params.domain]
+    );
 
     if (!rows.length) {
       return res.status(404).json({ message: "Dominio no encontrado" });
@@ -272,84 +265,18 @@ app.get("/public/:domain", async (req, res) => {
 
     res.json(rows[0]);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Error del servidor" });
   }
 });
 
 /* =========================================================
-   GUARDAR INVITADOS (DASHBOARD)
+   GUARDAR INVITADOS
 ========================================================= */
 app.put("/user/guests/:id", async (req, res) => {
   if (!Array.isArray(req.body.guests_json)) {
     return res.status(400).json({ message: "Formato incorrecto" });
   }
 
-  await db.query("UPDATE users SET guests_json = ? WHERE id = ?", [
-    JSON.stringify(req.body.guests_json),
-    req.params.id,
-  ]);
-
-  res.json({ ok: true });
-});
-
-/* =========================================================
-   RSVP PÚBLICO — CONFIRMACIÓN
-========================================================= */
-app.post("/public/rsvp/:userId", async (req, res) => {
-  const { code, attending, attendees, people, notes } = req.body;
-
-  try {
-    const [rows] = await db.query(
-      "SELECT guests_json FROM users WHERE id = ?",
-      [req.params.userId]
-    );
-
-    if (!rows.length) {
-      return res.status(404).json({ message: "Boda no encontrada" });
-    }
-
-    let guests = [];
-    if (typeof rows[0].guests_json === "string") {
-      guests = JSON.parse(rows[0].guests_json);
-    } else if (Array.isArray(rows[0].guests_json)) {
-      guests = rows[0].guests_json;
-    }
-
-    const idx = guests.findIndex(
-      (g) =>
-        String(g.code).toUpperCase() === String(code).toUpperCase() ||
-        String(g.id).toUpperCase() === String(code).toUpperCase()
-    );
-
-    if (idx === -1) {
-      return res.status(404).json({ message: "Código no válido" });
-    }
-
-    guests[idx] = {
-      ...guests[idx],
-      confirmed: !!attending,
-      attendees: attending ? Number(attendees) : 0,
-      people: attending ? people : [],
-      notes: notes || "",
-      responded_at: new Date().toISOString(),
-    };
-
-    await db.query("UPDATE users SET guests_json = ? WHERE id = ?", [
-      JSON.stringify(guests),
-      req.params.userId,
-    ]);
-
-    res.json({ ok: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error en el servidor" });
-  }
-});
-
-/* =========================================================
-   SERVIDOR
-========================================================= */
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  await db.query(
+    "UPDATE users SET guests_json = ? WHERE id = ?",
+    [JSON.stringify(req.body.guests]()
