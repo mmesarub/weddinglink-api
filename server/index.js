@@ -38,26 +38,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* =========================================================
-   CONEXIÓN MYSQL
-   - Railway: usa MYSQLHOST/MYSQLUSER/MYSQLPASSWORD/MYSQLDATABASE/MYSQLPORT
-   - Local: fallback a DB_HOST/DB_USER/DB_PASSWORD/DB_NAME si las tienes
+   CONEXIÓN MYSQL (Railway)
 ========================================================= */
 let db;
 
 (async () => {
   try {
-    db = await mysql.createPool({
-      host: process.env.MYSQLHOST || process.env.DB_HOST,
-      user: process.env.MYSQLUSER || process.env.DB_USER,
-      password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
-      database: process.env.MYSQLDATABASE || process.env.DB_NAME,
-      port: Number(process.env.MYSQLPORT || 3306),
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0,
-    });
+    db = await mysql.createPool(process.env.MYSQL_URL);
 
-    // Test rápido de conexión
+    // prueba real de conexión
     await db.query("SELECT 1");
 
     console.log("✅ MySQL conectado");
@@ -65,6 +54,8 @@ let db;
     console.error("❌ Error conectando a MySQL", err);
   }
 })();
+
+
 
 /* =========================================================
    HEALTHCHECK (útil para comprobar Railway rápido)
