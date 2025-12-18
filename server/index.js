@@ -107,8 +107,8 @@ app.post("/register", async (req, res) => {
 
     await db.query(
       `INSERT INTO users 
-      (name, email, password, bride_name, groom_name, domain) 
-      VALUES (?, ?, ?, ?, ?, ?)`,
+       (name, email, password, bride_name, groom_name, domain) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
       [name, email, hash, bride_name, groom_name, domain]
     );
 
@@ -144,7 +144,6 @@ app.post("/login", async (req, res) => {
 
     res.json({ user });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Error en el servidor" });
   }
 });
@@ -227,11 +226,7 @@ app.post("/public/upload-photo", upload.single("photo"), async (req, res) => {
     }
 
     const user = rows[0];
-    let photos = [];
-
-    if (typeof user.photos_json === "string" && user.photos_json.trim()) {
-      photos = JSON.parse(user.photos_json);
-    }
+    const photos = JSON.parse(user.photos_json || "[]");
 
     const baseUrl = `${req.protocol}://${req.get("host")}`;
     const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
@@ -270,13 +265,74 @@ app.get("/public/:domain", async (req, res) => {
 });
 
 /* =========================================================
-   GUARDAR INVITADOS
+   GUARDAR INVITADOS (FIX DEFINITIVO)
 ========================================================= */
 app.put("/user/guests/:id", async (req, res) => {
-  if (!Array.isArray(req.body.guests_json)) {
-    return res.status(400).json({ message: "Formato incorrecto" });
-  }
+  try {
+    if (!Array.isArray(req.body.guests_json)) {
+      return res.status(400).json({ message: "Formato incorrecto" });
+    }
 
-  await db.query(
-    "UPDATE users SET guests_json = ? WHERE id = ?",
-    [JSON.stringify(req.body.guests]()
+    await db.query(
+      "UPDATE users SET guests_json = ? WHERE id = ?",
+      [JSON.stringify(req.body.guests_json), req.params.id]
+    );
+
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+});
+
+/* =========================================================
+   RSVP PÚBLICO
+========================================================= */
+app.post("/public/rsvp/:userId", async (req, res) => {
+  try {
+    const { code, attending, attendees, people, notes } = req.body;
+
+    const [rows] = await db.query(
+      "SELECT guests_json FROM users WHERE id = ?",
+      [req.params.userId]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({ message: "Boda no encontrada" });
+    }
+
+    const guests = JSON.parse(rows[0].guests_json || "[]");
+
+    const idx = guests.findIndex(
+      (g) => String(g.code).toUpperCase() === String(code).toUpperCase()
+    );
+
+    if (idx === -1) {
+      return res.status(404).json({ message: "Código no válido" });
+    }
+
+    guests[idx] = {
+      ...guests[idx],
+      confirmed: !!attending,
+      attendees: attending ? Number(attendees) : 0,
+      people: attending ? people : [],
+      notes: notes || "",
+      responded_at: new Date().toISOString(),
+    };
+
+    await db.query(
+      "UPDATE users SET guests_json = ? WHERE id = ?",
+      [JSON.stringify(guests), req.params.userId]
+    );
+
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+});
+
+/* =========================================================
+   SERVIDOR
+========================================================= */
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
