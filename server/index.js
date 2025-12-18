@@ -44,7 +44,15 @@ let db;
 
 (async () => {
   try {
-    db = await mysql.createPool(process.env.MYSQL_URL);
+  db = await mysql.createPool({
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: Number(process.env.MYSQLPORT || 3306),
+  ssl: false
+});
+
 
     // prueba real de conexión
     await db.query("SELECT 1");
